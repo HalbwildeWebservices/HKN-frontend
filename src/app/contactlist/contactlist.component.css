@@ -1,0 +1,7 @@
+.contactlist td {
+    padding-right: 2em;
+}
+.contactlist th {
+    padding-right: 2em;
+    text-align: left;
+}

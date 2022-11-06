@@ -1,0 +1,24 @@
+<button mat-button class="menu-button" routerLink="/home">
+    <mat-icon>home</mat-icon>
+    <span>Home</span>
+  </button>
+
+  <button mat-button class="menu-button" routerLink="/about-us">
+    <mat-icon>info</mat-icon>
+    <span>About Us</span>
+  </button>
+
+  <button mat-button class="menu-button" routerLink="/contact-hkn">
+    <mat-icon>email</mat-icon>
+    <span>Contact Us</span>
+  </button>
+
+  <button mat-button class="menu-button" routerLink="/sign-in" *ngIf="!this.authService.isLoggedIn()">
+    <mat-icon>lock_open</mat-icon>
+    <span>Sign in</span>
+  </button>
+
+  <button mat-button class="menu-button" routerLink="/dashboard" *ngIf="this.authService.isLoggedIn()">
+    <mat-icon>dashboard</mat-icon>
+    <span>Dashboard</span>
+  </button>

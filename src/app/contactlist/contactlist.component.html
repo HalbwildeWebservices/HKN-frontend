@@ -1,0 +1,16 @@
+<table class="contactlist">
+<tr>
+    <th>nr</th>
+    <th>username</th>
+    <th>firstName</th>
+    <th>lastName</th>
+</tr>
+<tr *ngFor="let user of users; index as i" class="contactlist">
+    <td>{{ i + 1 }}</td>
+    <td>{{ user['username'] }}</td>
+    <td>{{ user['firstName'] }}</td>
+    <td>{{ user['lastName'] }}</td>
+</tr>
+</table>
+<button type="button" (click)="getUsers()">Reload</button>
+<button type="button" (click)="this.router.navigate(['/dashboard'])">Back to dashboard</button>

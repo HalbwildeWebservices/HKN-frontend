@@ -1,0 +1,115 @@
+  <mat-vertical-stepper [linear]="true" #stepper>
+    <mat-step [stepControl]="nameFormGroup">
+      <form [formGroup]="nameFormGroup">
+        <ng-template matStepLabel>Name</ng-template>
+        <mat-form-field>
+          <input matInput placeholder="first name" formControlName="firstName" required>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput placeholder="last name" formControlName="lastName" required>
+          </mat-form-field>
+        <div>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="addressFormGroup">
+      <form [formGroup]="addressFormGroup">
+        <ng-template matStepLabel>Address</ng-template>
+        <mat-form-field>
+          <input matInput placeholder="street" formControlName="street" required>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput placeholder="number" formControlName="houseNumber" required>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput placeholder="zip code"formControlName="zipCode" required>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput placeholder="town" formControlName="town" required>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput placeholder="country" formControlName="country" required>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="reachabilityFormGroup">
+      <form [formGroup]="reachabilityFormGroup">
+        <ng-template matStepLabel>Mail and Phone</ng-template>
+        <mat-form-field>
+          <input matInput formControlName="email" placeholder="verylongmail@example.com" required>
+          <mat-hint>valid email address, will not be shown</mat-hint>
+        </mat-form-field>
+        <ng-container formArrayName="phoneNumbers">
+          <p>Phone Numbers</p>
+          <ng-container *ngFor="let phoneForm of phoneNumbers.controls; let i = index">
+            <div [formGroup]="phoneForm">
+              <mat-form-field>
+                <input matInput placeholder="phone number" formControlName="number"> 
+              </mat-form-field>
+              <mat-form-field>
+                <mat-select formControlName="description" placeholder="home/mobile/work...">
+                  <mat-option value="home">Home</mat-option>
+                  <mat-option value="mobile">Mobile</mat-option>
+                  <mat-option value="work">Work</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-icon class="delete-btn" (click)="deletePhone(i)">
+                delete_forever</mat-icon>
+            </div>
+          </ng-container>
+        </ng-container>
+        <button mat-mini-fab (click)="addPhone()" matTooltip="add phone">
+          <mat-icon class="add-phone-btn">add</mat-icon>
+        </button>
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form>
+  </mat-step>
+    <mat-step [stepControl]="userFormGroup">
+        <form [formGroup]="userFormGroup">
+          <ng-template matStepLabel>Username and Password</ng-template>
+          <mat-form-field>
+              <input matInput formControlName="username" placeholder="username" required>
+              <mat-hint>min 6 / max 15 characters</mat-hint>
+          </mat-form-field>
+          <mat-form-field>
+              <input matInput formControlName="password" placeholder="password" required>
+              <mat-hint>min 15 / max 30 characters</mat-hint>
+          </mat-form-field>
+          <div>
+            <button mat-button matStepperPrevious>Back</button>
+            <button mat-button matStepperNext>Next</button>
+          </div>
+        </form>
+    </mat-step>
+    <mat-step [stepControl]="privacyAndTermsGroup">
+        <form [formGroup]="privacyAndTermsGroup">
+          <ng-template matStepLabel>Privacy and Terms of Use</ng-template>
+          <div>
+            <mat-checkbox formControlName="termsAccepted" required>accept terms and conditions</mat-checkbox> 
+            <mat-checkbox formControlName="privacyAccepted" required>accept privacy statement</mat-checkbox>
+          </div>
+          <div>
+            <button mat-button matStepperPrevious>Back</button>
+            <button mat-button matStepperNext>Next</button>
+          </div>
+        </form>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Done</ng-template>
+      <p>Input complete</p>
+      <div>
+        <button mat-button (click)="submit()">Submit</button>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button (click)="stepper.reset()">Reset</button>
+      </div>
+    </mat-step>
+  </mat-vertical-stepper>
+  
