@@ -9,11 +9,25 @@ import { UserService } from '../services/userService/user.service';
 })
 export class CreateUserComponent implements OnInit {
 
-  nameFormGroup: FormGroup;
-  addressFormGroup: FormGroup;
-  reachabilityFormGroup: FormGroup<{email: FormControl, phoneNumbers: FormArray<FormGroup<{number: FormControl, description: FormControl}>>}>;
-  userFormGroup: FormGroup;
-  privacyAndTermsGroup: FormGroup;
+  nameFormGroup: FormGroup<{firstName: FormControl<string | null>, lastName: FormControl<string | null>}>;
+  addressFormGroup: FormGroup<{
+    street: FormControl<string | null>, 
+    houseNumber: FormControl<string | null>
+    zipCode: FormControl<string | null>
+    town: FormControl<string | null>
+    country: FormControl<string | null>
+  }>;
+  reachabilityFormGroup: FormGroup<{
+    email: FormControl<string | null>, 
+    phoneNumbers: FormArray<FormGroup<{
+      number: FormControl<string | null>, 
+      description: FormControl<string | null>}>>
+  }>;
+  userFormGroup: FormGroup<{username: FormControl<string | null>, password: FormControl<string | null>}>;
+  privacyAndTermsGroup: FormGroup<{
+    termsAccepted: FormControl<boolean | null>
+    privacyAccepted: FormControl<boolean | null>
+  }>;
 
   constructor(private formBuilder: FormBuilder, private userService: UserService) {
     this.nameFormGroup = this.formBuilder.group({
