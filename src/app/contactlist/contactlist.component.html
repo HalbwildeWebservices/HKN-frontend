@@ -4,12 +4,16 @@
     <th>username</th>
     <th>firstName</th>
     <th>lastName</th>
+    <th>actions</th>
 </tr>
 <tr *ngFor="let user of users; index as i" class="contactlist">
     <td>{{ i + 1 }}</td>
     <td>{{ user['username'] }}</td>
     <td>{{ user['firstName'] }}</td>
     <td>{{ user['lastName'] }}</td>
+    <td>
+        <button type="button" (click)="showDetail(user)"></button>
+    </td>
 </tr>
 </table>
 <button type="button" (click)="getUsers()">Reload</button>

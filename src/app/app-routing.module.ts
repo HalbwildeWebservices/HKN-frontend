@@ -9,6 +9,7 @@ import { AuthGuardService } from './services/auth-guard/auth-guard.service';
 import { ContactlistComponent } from './contactlist/contactlist.component';
 import { MemberProfileComponent } from './member-profile/member-profile.component';
 import { CreateUserComponent } from './create-user/create-user.component';
+import { UserDetailComponent } from './user-detail/user-detail.component';
 
 const routes: Routes = [
   {

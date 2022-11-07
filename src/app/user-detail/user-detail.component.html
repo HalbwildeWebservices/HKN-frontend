@@ -1,0 +1,17 @@
+<div>
+    <label>{{this.data.user.firstName}} {{this.data.user.lastName}}</label>
+    <label>{{this.data.user.email}}</label>
+    <div *ngIf="this.data.user.address">
+        <label>{{this.data.user.address.street}}</label>
+        <label>{{this.data.user.address.houseNumber}}</label>
+        <label>{{this.data.user.address.zipCode}}</label>
+        <label>{{this.data.user.address.town}}</label>
+    </div>
+    <div *ngIf="this.data.user.phoneNumbers">
+        <div *ngFor="let phoneNumber of this.data.user.phoneNumbers">
+            <label>{{phoneNumber.number}}</label>
+            <label>{{phoneNumber.description}}</label>
+        </div>
+    </div>
+</div>
+

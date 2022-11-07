@@ -18,6 +18,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatDialogModule } from '@angular/material/dialog';
 import { ContactHKNComponent } from './contact-hkn/contact-hkn.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -27,6 +28,7 @@ import { MemberProfileComponent } from './member-profile/member-profile.componen
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { httpInterceptorProviders } from './http-interceptors';
 import { CreateUserComponent } from './create-user/create-user.component';
+import { UserDetailComponent } from './user-detail/user-detail.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +41,8 @@ import { CreateUserComponent } from './create-user/create-user.component';
     ContactlistComponent,
     MemberProfileComponent,
     SidenavComponent,
-    CreateUserComponent
+    CreateUserComponent,
+    UserDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -58,6 +61,7 @@ import { CreateUserComponent } from './create-user/create-user.component';
     MatCheckboxModule,
     MatSelectModule,
     MatTooltipModule,
+    MatDialogModule,
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

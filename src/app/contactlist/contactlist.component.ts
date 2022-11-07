@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { IUser } from 'hkn-common';
 import { Observable } from 'rxjs';
 import { UserService } from '../services/userService/user.service';
+import { UserDetailComponent } from '../user-detail/user-detail.component';
 
 @Component({
   selector: 'app-contactlist',
@@ -10,9 +13,9 @@ import { UserService } from '../services/userService/user.service';
 })
 export class ContactlistComponent implements OnInit {
 
-  public users: {[key: string]: string}[] = [];
+  public users: IUser[] = [];
 
-  constructor(public router: Router, private userService: UserService) { 
+  constructor(public router: Router, private userService: UserService, private dialog: MatDialog) { 
 
   }
 
@@ -26,6 +29,12 @@ export class ContactlistComponent implements OnInit {
       console.log(res);
       this.users = res;
     });
+  }
+
+  public showDetail(user: IUser) {
+    this.dialog.open(UserDetailComponent, {
+      data: { user },
+    })
   }
 
 }
