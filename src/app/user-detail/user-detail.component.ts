@@ -9,12 +9,27 @@ import { IUser } from 'hkn-common';
   styleUrls: ['./user-detail.component.css']
 })
 export class UserDetailComponent implements OnInit {
+  private selectionIndex: number;
+  public user: IUser
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: {user: IUser}, private formBuilder: FormBuilder) { 
-    
+  constructor(@Inject(MAT_DIALOG_DATA) public data: {users: IUser[], selectionIndex: number}) { 
+    this.selectionIndex = data.selectionIndex;
+    this.user = data.users[this.selectionIndex];
   }
 
   ngOnInit(): void {
   }
+
+  nextUser() {
+    this.selectionIndex = Math.min(this.data.users.length -1, this.selectionIndex + 1);
+    this.user = this.data.users[this.selectionIndex];
+  }
+
+  previousUser() {
+    this.selectionIndex = Math.max(0, this.selectionIndex - 1);
+    this.user = this.data.users[this.selectionIndex];
+  }
+
+
 
 }

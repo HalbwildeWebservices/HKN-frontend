@@ -12,7 +12,9 @@
     <td>{{ user['firstName'] }}</td>
     <td>{{ user['lastName'] }}</td>
     <td>
-        <button type="button" (click)="showDetail(user)"></button>
+        <mat-icon (click)="showDetail(i)">search icon</mat-icon>
+        <mat-icon>edit icon</mat-icon>
+        <mat-icon>delete</mat-icon>
     </td>
 </tr>
 </table>

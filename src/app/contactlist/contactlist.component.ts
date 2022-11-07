@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { IUser } from 'hkn-common';
-import { Observable } from 'rxjs';
 import { UserService } from '../services/userService/user.service';
 import { UserDetailComponent } from '../user-detail/user-detail.component';
 
@@ -31,9 +30,9 @@ export class ContactlistComponent implements OnInit {
     });
   }
 
-  public showDetail(user: IUser) {
+  public showDetail(selectionIndex: number) {
     this.dialog.open(UserDetailComponent, {
-      data: { user },
+      data: { users: this.users, selectionIndex},
     })
   }
 

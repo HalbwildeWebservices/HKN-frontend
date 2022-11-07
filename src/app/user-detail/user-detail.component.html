@@ -1,17 +1,21 @@
 <div>
-    <label>{{this.data.user.firstName}} {{this.data.user.lastName}}</label>
-    <label>{{this.data.user.email}}</label>
-    <div *ngIf="this.data.user.address">
-        <label>{{this.data.user.address.street}}</label>
-        <label>{{this.data.user.address.houseNumber}}</label>
-        <label>{{this.data.user.address.zipCode}}</label>
-        <label>{{this.data.user.address.town}}</label>
+    <label>{{this.user.firstName}} {{this.user.lastName}}</label>
+    <label>{{this.user.email}}</label>
+    <div *ngIf="this.user.address">
+        <label>{{this.user.address.street}}</label>
+        <label>{{this.user.address.houseNumber}}</label>
+        <label>{{this.user.address.zipCode}}</label>
+        <label>{{this.user.address.town}}</label>
     </div>
-    <div *ngIf="this.data.user.phoneNumbers">
-        <div *ngFor="let phoneNumber of this.data.user.phoneNumbers">
+    <div *ngIf="this.user.phoneNumbers">
+        <div *ngFor="let phoneNumber of this.user.phoneNumbers">
             <label>{{phoneNumber.number}}</label>
             <label>{{phoneNumber.description}}</label>
         </div>
+    </div>
+    <div>
+        <mat-icon (click)="nextUser()" matTooltip="next">arrow_downward</mat-icon>
+        <mat-icon (click)="previousUser()" matTooltip="previous">arrow_upward</mat-icon>
     </div>
 </div>
 
