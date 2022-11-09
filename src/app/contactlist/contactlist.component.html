@@ -12,11 +12,11 @@
     <td>{{ user['firstName'] }}</td>
     <td>{{ user['lastName'] }}</td>
     <td>
-        <mat-icon (click)="showDetail(i)">search icon</mat-icon>
-        <mat-icon>edit icon</mat-icon>
-        <mat-icon>delete</mat-icon>
+        <mat-icon fontIcon="search icon" (click)="showDetail(i)">search icon</mat-icon>
+        <mat-icon fontIcon="edit icon"></mat-icon>
+        <mat-icon fontIcon="delete" (click)="deleteUser(user.userId)"></mat-icon>
     </td>
 </tr>
 </table>
-<button type="button" (click)="getUsers()">Reload</button>
-<button type="button" (click)="this.router.navigate(['/dashboard'])">Back to dashboard</button>
+<button mat-button (click)="getUsers()">Reload</button>
+<button mat-button (click)="this.router.navigate(['/dashboard'])">Back to dashboard</button>

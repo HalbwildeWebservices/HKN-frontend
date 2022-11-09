@@ -17,5 +17,9 @@ export class UserService {
     return this.http.post('https://localhost:3000/users', user);
   }
 
+  public deleteUser(userId: string) {
+    return this.http.delete<IUser[]>(`https://localhost:3000/users/${userId}`)
+  }
+
 
 }
