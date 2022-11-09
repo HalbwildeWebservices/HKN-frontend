@@ -1,21 +1,42 @@
 <div>
-    <label>{{this.user.firstName}} {{this.user.lastName}}</label>
-    <label>{{this.user.email}}</label>
-    <div *ngIf="this.user.address">
-        <label>{{this.user.address.street}}</label>
-        <label>{{this.user.address.houseNumber}}</label>
-        <label>{{this.user.address.zipCode}}</label>
-        <label>{{this.user.address.town}}</label>
-    </div>
-    <div *ngIf="this.user.phoneNumbers">
-        <div *ngFor="let phoneNumber of this.user.phoneNumbers">
-            <label>{{phoneNumber.number}}</label>
-            <label>{{phoneNumber.description}}</label>
+    <h2>{{this.user.firstName}} {{this.user.lastName}}</h2>
+    <div class="row">
+        <div class="col">
+            <mat-icon class="align-middle" fontIcon="person"></mat-icon>
+            <label class="ps-1">{{this.user.firstName}} {{this.user.lastName}}</label>
         </div>
     </div>
-    <div>
-        <mat-icon (click)="nextUser()" matTooltip="next">arrow_downward</mat-icon>
-        <mat-icon (click)="previousUser()" matTooltip="previous">arrow_upward</mat-icon>
+    <div *ngIf="this.user.address">
+        <mat-icon fontIcon="home" class="align-middle"></mat-icon>
+        <label class="ps-1">
+            {{this.user.address.street}} {{this.user.address.houseNumber}}, 
+            {{this.user.address.zipCode}} {{this.user.address.town}}
+        </label>
+    </div>
+    <div class="row">
+        <div class="col">
+            <mat-icon class="align-middle" fontIcon="email"></mat-icon>
+            <label class="ps-1">{{this.user.email}}</label>
+        </div>
+        
+    </div>
+    <div class="row" *ngIf="this.user.phoneNumbers">
+        <div *ngFor="let phoneNumber of this.user.phoneNumbers">
+            <mat-icon class="align-middle" fontIcon="phone"></mat-icon>
+            <label class="ps-1">{{phoneNumber.number}} ({{phoneNumber.description}})</label>
+            
+        </div>
+    </div>
+    <div class="row pt-3">
+        <div class="col-6" (click)="nextUser()">
+            <mat-icon class="align-middle" fontIcon="arrow_downward" matTooltip="next"></mat-icon>
+            <label class="ps-1">next</label>
+        </div>
+        <div class="col-6" (click)="previousUser()">
+            <mat-icon class="align-middle" fontIcon="arrow_upward" matTooltip="previous"></mat-icon>
+            <label class="ps-1">previous</label>
+        </div>
+        
     </div>
 </div>
 
