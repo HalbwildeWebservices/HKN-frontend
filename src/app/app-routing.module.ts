@@ -39,8 +39,13 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
-    path: 'contactlist',
+    path: 'users',
     component: ContactlistComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'users/:userId',
+    component: CreateUserComponent,
     canActivate: [AuthGuardService],
   },
   {
@@ -49,7 +54,7 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
-    path: 'createUser',
+    path: 'users/new',
     component: CreateUserComponent,
     canActivate: [AuthGuardService],
   }

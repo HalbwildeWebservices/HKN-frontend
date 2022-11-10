@@ -1,13 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { IUser } from 'hkn-common';
 import { UserService } from '../services/userService/user.service';
+import { ActivatedRoute, Route, Router } from '@angular/router';
+import { Subject, filter, map, tap, firstValueFrom, first, take } from 'rxjs';
 
 @Component({
   selector: 'app-create-user',
   templateUrl: './create-user.component.html',
   styleUrls: ['./create-user.component.css']
 })
-export class CreateUserComponent implements OnInit {
+export class CreateUserComponent implements OnInit, OnDestroy {
+  public isLoading: boolean = false;
+  private userId: Subject<string> = new Subject();
+  private user: Subject<IUser> = new Subject();
+  public editMode: boolean = false;
 
   nameFormGroup: FormGroup<{firstName: FormControl<string | null>, lastName: FormControl<string | null>}>;
   addressFormGroup: FormGroup<{
@@ -29,7 +36,7 @@ export class CreateUserComponent implements OnInit {
     privacyAccepted: FormControl<boolean | null>
   }>;
 
-  constructor(private formBuilder: FormBuilder, private userService: UserService) {
+  constructor(private formBuilder: FormBuilder, private userService: UserService, private activatedRoute: ActivatedRoute) {
     this.nameFormGroup = this.formBuilder.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
@@ -56,7 +63,24 @@ export class CreateUserComponent implements OnInit {
   }
 
   ngOnInit() {
-    
+    this.isLoading = true;
+    this.user.subscribe((u) => {
+      this.isLoading = false;
+      this.fillForm(u)
+    })
+    this.userId.subscribe((id) => {
+        this.userService.getUser(id).subscribe((u) => this.user.next(u))
+    })
+    this.activatedRoute.params.pipe(
+      map((p) => p['userId'])
+    ).subscribe((id) => {
+      if (typeof id === 'string') {
+        this.userId.next(id)
+        this.editMode = true;
+      } else {
+        this.isLoading = false;
+      }
+    })
   }
 
   get phoneNumbers() {
@@ -85,6 +109,22 @@ export class CreateUserComponent implements OnInit {
     console.log(user);
     this.userService.addUser(user)
       .subscribe({next: (res) => console.log(res), error: (err) => console.log(err)})
+  }
+
+  private fillForm(user: IUser) {
+    if (user.address) {
+      this.addressFormGroup.setValue(user.address);
+      this.addressFormGroup.updateValueAndValidity();
+    }
+    this.nameFormGroup.setValue({firstName: user.firstName, lastName: user.lastName})
+    this.nameFormGroup.updateValueAndValidity();
+    this.reachabilityFormGroup.setValue({email: user.email, phoneNumbers: user.phoneNumbers ?? []});
+    this.reachabilityFormGroup.updateValueAndValidity();
+  }
+
+  ngOnDestroy(): void {
+    this.user.unsubscribe();
+    this.userId.unsubscribe();
   }
 
 }

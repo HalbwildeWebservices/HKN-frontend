@@ -26,7 +26,7 @@ export class ContactlistComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.forEach((subscription) => subscription.unsubscribe())
+    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
   }
 
 

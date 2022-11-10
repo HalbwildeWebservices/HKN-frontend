@@ -13,6 +13,10 @@ export class UserService {
     return this.http.get<IUser[]>('https://localhost:3000/users')
   }
 
+  public getUser(userId: string) {
+    return this.http.get<IUser>(`https://localhost:3000/users/${userId}`);
+  }
+
   public addUser(user: {[key: string]: any}) {
     return this.http.post('https://localhost:3000/users', user);
   }
