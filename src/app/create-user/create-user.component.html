@@ -128,7 +128,8 @@
       <ng-template matStepLabel>Done</ng-template>
       <p>Input complete</p>
       <div class="row">
-        <button class="col-1" mat-button (click)="submit()">Submit</button>
+        <button class="col-1" mat-button *ngIf="!editMode" (click)="submit()">Submit</button>
+        <button class="col-1" mat-button *ngIf="editMode" (click)="submit()">Update</button>
         <button class="col-1 btn btn-secondary" mat-button matStepperPrevious>Back</button>
         <button class="col-1 btn btn-secondary" mat-button (click)="stepper.reset()">Reset</button>
       </div>

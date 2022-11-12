@@ -2,8 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { IUser } from 'hkn-common';
 import { UserService } from '../services/userService/user.service';
-import { ActivatedRoute, Route, Router } from '@angular/router';
-import { Subject, filter, map, tap, firstValueFrom, first, take } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { Subject, map } from 'rxjs';
 
 @Component({
   selector: 'app-create-user',
@@ -12,9 +12,10 @@ import { Subject, filter, map, tap, firstValueFrom, first, take } from 'rxjs';
 })
 export class CreateUserComponent implements OnInit, OnDestroy {
   public isLoading: boolean = false;
-  private userId: Subject<string> = new Subject();
-  private user: Subject<IUser> = new Subject();
+  private $userId: Subject<string> = new Subject();
+  private $user: Subject<IUser> = new Subject();
   public editMode: boolean = false;
+  public storedUserId: string | undefined = undefined;
 
   nameFormGroup: FormGroup<{firstName: FormControl<string | null>, lastName: FormControl<string | null>}>;
   addressFormGroup: FormGroup<{
@@ -28,7 +29,9 @@ export class CreateUserComponent implements OnInit, OnDestroy {
     email: FormControl<string | null>, 
     phoneNumbers: FormArray<FormGroup<{
       number: FormControl<string | null>, 
-      description: FormControl<string | null>}>>
+      description: FormControl<string | null>
+      phoneId: FormControl<string | null>
+    }>>
   }>;
   userFormGroup: FormGroup<{username: FormControl<string | null>, password: FormControl<string | null>}>;
   privacyAndTermsGroup: FormGroup<{
@@ -64,18 +67,19 @@ export class CreateUserComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.isLoading = true;
-    this.user.subscribe((u) => {
+    this.$user.subscribe((u) => {
       this.isLoading = false;
       this.fillForm(u)
     })
-    this.userId.subscribe((id) => {
-        this.userService.getUser(id).subscribe((u) => this.user.next(u))
+    this.$userId.subscribe((id) => {
+        this.userService.getUser(id).subscribe((u) => this.$user.next(u))
+        this.storedUserId = id;
     })
     this.activatedRoute.params.pipe(
       map((p) => p['userId'])
     ).subscribe((id) => {
       if (typeof id === 'string') {
-        this.userId.next(id)
+        this.$userId.next(id)
         this.editMode = true;
       } else {
         this.isLoading = false;
@@ -88,11 +92,16 @@ export class CreateUserComponent implements OnInit, OnDestroy {
   }
 
   public addPhone() {
-    const phoneForm = this.formBuilder.group({
-      number: ['', [Validators.required, Validators.pattern(/^\+[\d]+$/)]],
-      description: ['', [Validators.required]],
-    });
+    const phoneForm = this.phoneNumberGroup()
     this.phoneNumbers.push(phoneForm);
+  }
+
+  private phoneNumberGroup(_number = "", _description = "", _phoneId = "") {
+    return this.formBuilder.group({
+      number: [_number, [Validators.required, Validators.pattern(/^\+[\d]+$/)]],
+      description: [_description, [Validators.required]],
+      phoneId: [_phoneId, []]
+    });
   }
 
   public deletePhone(phoneIdx: number) {
@@ -107,24 +116,37 @@ export class CreateUserComponent implements OnInit, OnDestroy {
       ...this.reachabilityFormGroup.value,
     }
     console.log(user);
-    this.userService.addUser(user)
+
+    if (!this.editMode) {
+      this.userService.addUser(user)
       .subscribe({next: (res) => console.log(res), error: (err) => console.log(err)})
+    } else if (this.editMode && typeof this.storedUserId === 'string') {
+      const {password, username, ...restUser} = user;
+      console.log(restUser);
+      this.userService.updateUser(this.storedUserId, restUser)
+        .subscribe({next: (res) => alert(JSON.stringify(res)), error: (err) => alert(JSON.stringify(err))})
+    }
+    
   }
 
   private fillForm(user: IUser) {
     if (user.address) {
-      this.addressFormGroup.setValue(user.address);
+      this.addressFormGroup.patchValue(user.address);
       this.addressFormGroup.updateValueAndValidity();
     }
-    this.nameFormGroup.setValue({firstName: user.firstName, lastName: user.lastName})
+    this.nameFormGroup.patchValue({firstName: user.firstName, lastName: user.lastName})
     this.nameFormGroup.updateValueAndValidity();
-    this.reachabilityFormGroup.setValue({email: user.email, phoneNumbers: user.phoneNumbers ?? []});
+    this.reachabilityFormGroup.patchValue({email: user.email});
+    for (const phoneNumber of user.phoneNumbers ?? []) {
+      const phoneForm = this.phoneNumberGroup(phoneNumber.number, phoneNumber.description, phoneNumber.phoneId);
+      this.reachabilityFormGroup.controls.phoneNumbers.push(phoneForm);
+    }
     this.reachabilityFormGroup.updateValueAndValidity();
   }
 
   ngOnDestroy(): void {
-    this.user.unsubscribe();
-    this.userId.unsubscribe();
+    this.$user.unsubscribe();
+    this.$userId.unsubscribe();
   }
 
 }

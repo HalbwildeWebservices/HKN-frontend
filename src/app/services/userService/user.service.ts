@@ -25,5 +25,9 @@ export class UserService {
     return this.http.delete<IUser[]>(`https://localhost:3000/users/${userId}`)
   }
 
+  public updateUser(userId: string, user: {[key: string]: any}) {
+    return this.http.patch<IUser>(`https://localhost:3000/users/${userId}`, user)
+  }
+
 
 }
