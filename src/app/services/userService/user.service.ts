@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ICreatePhoneNumberRequest, ICreateUserRequest, IPatchPhoneNumberRequest, IPatchUserRequest, IUser } from 'hkn-common';
+import { ICreatePhoneNumberRequest, ICreateUserRequest, IPatchPhoneNumberRequest, IPatchUserRequest, IUser, IUserResponse } from 'hkn-common';
 
 @Injectable({
   providedIn: 'root'
@@ -15,32 +15,32 @@ export class UserService {
   }
 
   public getUser(userId: string) {
-    return this.http.get<IUser>(`${this.baseUrl}/users/${userId}`);
+    return this.http.get<IUserResponse>(`${this.baseUrl}/users/${userId}`);
   }
 
   public addUser(createUserRequest: ICreateUserRequest) {
-    return this.http.post(`${this.baseUrl}/users`, createUserRequest);
+    return this.http.post<IUserResponse>(`${this.baseUrl}/users`, createUserRequest);
   }
 
   public deleteUser(userId: string) {
-    return this.http.delete<IUser[]>(`${this.baseUrl}/users/${userId}`)
+    return this.http.delete<IUserResponse[]>(`${this.baseUrl}/users/${userId}`)
   }
 
   public updateUser(userId: string, patchUserRequest: IPatchUserRequest) {
-    return this.http.patch<IUser>(`${this.baseUrl}/users/${userId}`, patchUserRequest)
+    return this.http.patch<IUserResponse>(`${this.baseUrl}/users/${userId}`, patchUserRequest)
   }
 
   public deletePhoneNumber(userId: string, phoneId: string) {
-    return this.http.delete(`${this.baseUrl}/users/${userId}/phone-numbers/${phoneId}`);
+    return this.http.delete<IUserResponse>(`${this.baseUrl}/users/${userId}/phone-numbers/${phoneId}`);
   }
 
   public updatePhoneNumber(userId: string, request: IPatchPhoneNumberRequest) {
-    return this.http.patch(`${this.baseUrl}/users/${userId}/phone-numbers/${request.phoneId}`, request);
+    return this.http.patch<IUserResponse>(`${this.baseUrl}/users/${userId}/phone-numbers/${request.phoneId}`, request);
   }
 
   public addPhoneNumber(userId: string, request: ICreatePhoneNumberRequest) {
     console.log('add phone number request', userId, request);
-    return this.http.post(`${this.baseUrl}/users/${userId}/phone-numbers`, request);
+    return this.http.post<IUserResponse>(`${this.baseUrl}/users/${userId}/phone-numbers`, request);
   }
 
 

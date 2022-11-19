@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { IUser } from 'hkn-common';
+import { IUserResponse } from 'hkn-common';
 import { Subscription } from 'rxjs';
 import { UserService } from '../services/userService/user.service';
 import { UserDetailComponent } from '../user-detail/user-detail.component';
@@ -13,7 +13,7 @@ import { UserDetailComponent } from '../user-detail/user-detail.component';
 })
 export class ContactlistComponent implements OnInit, OnDestroy {
 
-  public users: IUser[] = [];
+  public users: IUserResponse[] = [];
   private subscriptions: Subscription[] = [];
 
   constructor(public router: Router, private userService: UserService, private dialog: MatDialog) {

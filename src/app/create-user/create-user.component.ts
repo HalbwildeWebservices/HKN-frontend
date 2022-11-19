@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ICreatePhoneNumberRequest, ICreateUserRequest, IPatchPhoneNumberRequest, IPatchUserRequest, IPhoneNumber, IUser } from 'hkn-common';
+import { ICreatePhoneNumberRequest, ICreateUserRequest, IPatchPhoneNumberRequest, IPatchUserRequest, IPhoneNumber, IUser, IUserResponse } from 'hkn-common';
 import { UserService } from '../services/userService/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, map, debounceTime, firstValueFrom } from 'rxjs';
@@ -13,9 +13,9 @@ import { Subject, map, debounceTime, firstValueFrom } from 'rxjs';
 export class CreateUserComponent implements OnInit, OnDestroy {
   public isLoading: boolean = false;
   private $userId: Subject<string> = new Subject();
-  private $user: Subject<IUser> = new Subject();
+  private $user: Subject<IUserResponse> = new Subject();
   public editMode: boolean = false;
-  public storedUser: IUser | undefined = undefined;
+  public storedUser: IUserResponse | undefined = undefined;
   private deletedPhoneIds: Set<string> = new Set([]);
   private updatedPhoneIds: Set<string> = new Set([]);
 
@@ -80,7 +80,7 @@ export class CreateUserComponent implements OnInit, OnDestroy {
     this.activatedRoute.params.pipe(
       map((p) => p['userId'])
     ).subscribe((id) => {
-      if (typeof id === 'string') {
+      if (typeof id === 'string' && id !== 'new') {
         this.$userId.next(id)
         this.editMode = true;
       } else {
@@ -96,6 +96,7 @@ export class CreateUserComponent implements OnInit, OnDestroy {
   public addPhone() {
     const phoneForm = this.phoneNumberGroup()
     this.phoneNumbers.push(phoneForm);
+    this.reachabilityFormGroup.updateValueAndValidity();
   }
 
   private phoneNumberGroup(_number = "", _description = "", _phoneId = "") {
@@ -121,11 +122,18 @@ export class CreateUserComponent implements OnInit, OnDestroy {
       ...this.credentialsFormGroup.getRawValue(),
       ...this.nameFormGroup.getRawValue(),
       address: {...this.addressFormGroup.getRawValue()},
-      ...this.reachabilityFormGroup.getRawValue(),
+      email: this.reachabilityFormGroup.controls.email.getRawValue(),
+      phoneNumbers: this.reachabilityFormGroup.controls.phoneNumbers
+        .getRawValue()
+        .map((p) => {return {number: p.number, description: p.description}}),
     }
+    console.log('new user', userFromForm)
     if (!this.editMode) {
       this.userService.addUser(userFromForm)
-      .subscribe({next: (res) => console.log(res), error: (err) => console.log(err)})
+      .subscribe({next: (res) => {
+        alert(`user ${res.username} successfully created`);
+        this.router.navigate(['/dashboard'])
+      }, error: (err) => alert(err.error?.message ?? 'error - User may not have been created. Inform webmaster. Check contact list')})
     } else if (this.editMode && typeof this.storedUser?.userId === 'string') {
       const patchUserRequest: IPatchUserRequest = {
         firstName: userFromForm.firstName,
@@ -162,7 +170,7 @@ export class CreateUserComponent implements OnInit, OnDestroy {
     
   }
 
-  private fillForm(user: IUser) {
+  private fillForm(user: IUserResponse) {
     if (user.address) {
       this.addressFormGroup.patchValue(user.address);
       this.addressFormGroup.updateValueAndValidity();
