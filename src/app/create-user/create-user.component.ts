@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { IUser } from 'hkn-common';
+import { ICreatePhoneNumberRequest, ICreateUserRequest, IPatchPhoneNumberRequest, IPatchUserRequest, IPhoneNumber, IUser } from 'hkn-common';
 import { UserService } from '../services/userService/user.service';
-import { ActivatedRoute } from '@angular/router';
-import { Subject, map } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subject, map, debounceTime, firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-create-user',
@@ -15,51 +15,53 @@ export class CreateUserComponent implements OnInit, OnDestroy {
   private $userId: Subject<string> = new Subject();
   private $user: Subject<IUser> = new Subject();
   public editMode: boolean = false;
-  public storedUserId: string | undefined = undefined;
+  public storedUser: IUser | undefined = undefined;
+  private deletedPhoneIds: Set<string> = new Set([]);
+  private updatedPhoneIds: Set<string> = new Set([]);
 
-  nameFormGroup: FormGroup<{firstName: FormControl<string | null>, lastName: FormControl<string | null>}>;
+  nameFormGroup: FormGroup<{firstName: FormControl<string>, lastName: FormControl<string>}>;
   addressFormGroup: FormGroup<{
-    street: FormControl<string | null>, 
-    houseNumber: FormControl<string | null>
-    zipCode: FormControl<string | null>
-    town: FormControl<string | null>
-    country: FormControl<string | null>
+    street: FormControl<string>, 
+    houseNumber: FormControl<string>
+    zipCode: FormControl<string>
+    town: FormControl<string>
+    country: FormControl<string>
   }>;
   reachabilityFormGroup: FormGroup<{
-    email: FormControl<string | null>, 
+    email: FormControl<string>, 
     phoneNumbers: FormArray<FormGroup<{
-      number: FormControl<string | null>, 
-      description: FormControl<string | null>
-      phoneId: FormControl<string | null>
+      number: FormControl<string>, 
+      description: FormControl<string>
+      phoneId: FormControl<string>
     }>>
   }>;
-  userFormGroup: FormGroup<{username: FormControl<string | null>, password: FormControl<string | null>}>;
+  credentialsFormGroup: FormGroup<{username: FormControl<string>, password: FormControl<string>}>;
   privacyAndTermsGroup: FormGroup<{
-    termsAccepted: FormControl<boolean | null>
-    privacyAccepted: FormControl<boolean | null>
+    termsAccepted: FormControl<boolean>
+    privacyAccepted: FormControl<boolean>
   }>;
 
-  constructor(private formBuilder: FormBuilder, private userService: UserService, private activatedRoute: ActivatedRoute) {
-    this.nameFormGroup = this.formBuilder.group({
+  constructor(private formBuilder: FormBuilder, private userService: UserService, private activatedRoute: ActivatedRoute, private router: Router) {
+    this.nameFormGroup = this.formBuilder.nonNullable.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
     });
-    this.addressFormGroup = this.formBuilder.group({
-      street: ['', Validators.required],
+    this.addressFormGroup = this.formBuilder.nonNullable.group({
+      street: ['', [Validators.required]],
       houseNumber: ['', Validators.required],
       zipCode: ['', Validators.required],
       town: ['', Validators.required],
       country: ['', Validators.required],
     });
-    this.reachabilityFormGroup = this.formBuilder.group({
+    this.reachabilityFormGroup = this.formBuilder.nonNullable.group({
       email: ['', [Validators.required, Validators.email]],
       phoneNumbers: this.formBuilder.array<FormGroup>([])
     });
-    this.userFormGroup = this.formBuilder.group({
+    this.credentialsFormGroup = this.formBuilder.nonNullable.group({
       username: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(15)]],
       password: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(30)]]
     });
-    this.privacyAndTermsGroup = this.formBuilder.group({
+    this.privacyAndTermsGroup = this.formBuilder.nonNullable.group({
       termsAccepted: [false, Validators.requiredTrue],
       privacyAccepted: [false, Validators.requiredTrue],
     });
@@ -69,11 +71,11 @@ export class CreateUserComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.$user.subscribe((u) => {
       this.isLoading = false;
-      this.fillForm(u)
+      this.storedUser = u;
+      this.fillForm(u);
     })
     this.$userId.subscribe((id) => {
-        this.userService.getUser(id).subscribe((u) => this.$user.next(u))
-        this.storedUserId = id;
+        this.userService.getUser(id).subscribe((u) => this.$user.next(u));
     })
     this.activatedRoute.params.pipe(
       map((p) => p['userId'])
@@ -84,7 +86,7 @@ export class CreateUserComponent implements OnInit, OnDestroy {
       } else {
         this.isLoading = false;
       }
-    })
+    });
   }
 
   get phoneNumbers() {
@@ -97,7 +99,7 @@ export class CreateUserComponent implements OnInit, OnDestroy {
   }
 
   private phoneNumberGroup(_number = "", _description = "", _phoneId = "") {
-    return this.formBuilder.group({
+    return this.formBuilder.nonNullable.group({
       number: [_number, [Validators.required, Validators.pattern(/^\+[\d]+$/)]],
       description: [_description, [Validators.required]],
       phoneId: [_phoneId, []]
@@ -105,26 +107,57 @@ export class CreateUserComponent implements OnInit, OnDestroy {
   }
 
   public deletePhone(phoneIdx: number) {
+    const phoneId = this.phoneNumbers.at(phoneIdx).getRawValue().phoneId;
+    if (phoneId !== '') {
+      this.deletedPhoneIds.add(phoneId);
+      this.updatedPhoneIds.delete(phoneId);
+    }
     this.phoneNumbers.removeAt(phoneIdx);
+    
   }
 
   public submit() {
-    const user = {
-      ...this.userFormGroup.value,
-      ...this.nameFormGroup.value,
-      address: {...this.addressFormGroup.value},
-      ...this.reachabilityFormGroup.value,
+    const userFromForm: ICreateUserRequest = {
+      ...this.credentialsFormGroup.getRawValue(),
+      ...this.nameFormGroup.getRawValue(),
+      address: {...this.addressFormGroup.getRawValue()},
+      ...this.reachabilityFormGroup.getRawValue(),
     }
-    console.log(user);
-
     if (!this.editMode) {
-      this.userService.addUser(user)
+      this.userService.addUser(userFromForm)
       .subscribe({next: (res) => console.log(res), error: (err) => console.log(err)})
-    } else if (this.editMode && typeof this.storedUserId === 'string') {
-      const {password, username, ...restUser} = user;
-      console.log(restUser);
-      this.userService.updateUser(this.storedUserId, restUser)
-        .subscribe({next: (res) => alert(JSON.stringify(res)), error: (err) => alert(JSON.stringify(err))})
+    } else if (this.editMode && typeof this.storedUser?.userId === 'string') {
+      const patchUserRequest: IPatchUserRequest = {
+        firstName: userFromForm.firstName,
+        lastName: userFromForm.lastName,
+        email: userFromForm.email,
+        address: userFromForm.address,
+      }
+      const updateUserPromises: Promise<any>[] = []
+      updateUserPromises.push(firstValueFrom(this.userService.updateUser(this.storedUser.userId, patchUserRequest)))
+    
+      const phoneNumbers = this.reachabilityFormGroup.controls.phoneNumbers.getRawValue();
+      const patchPhoneRequests: IPatchPhoneNumberRequest[] = []
+      const newPhoneRequest: ICreatePhoneNumberRequest[] = [];
+      for (const phoneNumber of phoneNumbers) {
+        if (phoneNumber.phoneId === '') {
+          newPhoneRequest.push({number: phoneNumber.number, description: phoneNumber.description})
+        } else if (this.updatedPhoneIds.has(phoneNumber.phoneId)) {
+          patchPhoneRequests.push(phoneNumber);
+        }
+      } 
+      for (const request of newPhoneRequest) {
+        updateUserPromises.push(firstValueFrom(this.userService.addPhoneNumber(this.storedUser.userId, request)));
+      } 
+      for (const request of patchPhoneRequests) {
+        updateUserPromises.push(firstValueFrom(this.userService.updatePhoneNumber(this.storedUser.userId, request)));
+      } 
+      for (const phoneId of this.deletedPhoneIds) {
+        updateUserPromises.push(firstValueFrom(this.userService.deletePhoneNumber(this.storedUser.userId, phoneId)));
+      }  
+      Promise.all(updateUserPromises)
+        .then(() => this.router.navigate(['/dashboard']))
+        .catch((err) => alert(err.error.message)) 
     }
     
   }
@@ -139,6 +172,11 @@ export class CreateUserComponent implements OnInit, OnDestroy {
     this.reachabilityFormGroup.patchValue({email: user.email});
     for (const phoneNumber of user.phoneNumbers ?? []) {
       const phoneForm = this.phoneNumberGroup(phoneNumber.number, phoneNumber.description, phoneNumber.phoneId);
+      phoneForm.valueChanges.pipe(debounceTime(500)).subscribe((res) => {
+        if (res.phoneId) {
+          this.updatedPhoneIds.add(res.phoneId ?? 'unknown');
+        }
+      });
       this.reachabilityFormGroup.controls.phoneNumbers.push(phoneForm);
     }
     this.reachabilityFormGroup.updateValueAndValidity();
