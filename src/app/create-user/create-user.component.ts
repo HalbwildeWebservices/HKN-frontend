@@ -164,7 +164,10 @@ export class CreateUserComponent implements OnInit, OnDestroy {
         updateUserPromises.push(firstValueFrom(this.userService.deletePhoneNumber(this.storedUser.userId, phoneId)));
       }  
       Promise.all(updateUserPromises)
-        .then(() => this.router.navigate(['/dashboard']))
+        .then(() => {
+          alert(`successfully updated user ${this.storedUser?.username}`);
+          this.router.navigate(['/dashboard']);
+        })
         .catch((err) => alert(err.error.message)) 
     }
     
