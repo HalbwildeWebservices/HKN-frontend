@@ -4,6 +4,7 @@ import { ICreatePhoneNumberRequest, ICreateUserRequest, IPatchPhoneNumberRequest
 import { UserService } from '../services/userService/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, map, debounceTime, firstValueFrom } from 'rxjs';
+import { UserIdTransferService } from '../services/userIdTransfer/user-id-transfer.service';
 
 @Component({
   selector: 'app-create-user',
@@ -41,7 +42,14 @@ export class CreateUserComponent implements OnInit, OnDestroy {
     privacyAccepted: FormControl<boolean>
   }>;
 
-  constructor(private formBuilder: FormBuilder, private userService: UserService, private activatedRoute: ActivatedRoute, private router: Router) {
+  constructor(
+    private formBuilder: FormBuilder, 
+    private userService: UserService, 
+    private userIdTransferService: UserIdTransferService,
+    private activatedRoute: ActivatedRoute, 
+    private router: Router
+    ) {
+      
     this.nameFormGroup = this.formBuilder.nonNullable.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
@@ -74,15 +82,10 @@ export class CreateUserComponent implements OnInit, OnDestroy {
       this.storedUser = u;
       this.fillForm(u);
     })
-    this.$userId.subscribe((id) => {
-        this.userService.getUser(id).subscribe((u) => this.$user.next(u));
-    })
-    this.activatedRoute.params.pipe(
-      map((p) => p['userId'])
-    ).subscribe((id) => {
-      if (typeof id === 'string' && id !== 'new') {
-        this.$userId.next(id)
+    this.userIdTransferService.userId.subscribe((userId) => {
+      if (userId !== undefined) {
         this.editMode = true;
+        this.userService.getUser(userId).subscribe((u) => this.$user.next(u));
       } else {
         this.isLoading = false;
       }

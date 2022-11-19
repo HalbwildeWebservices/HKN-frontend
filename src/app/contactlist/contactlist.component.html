@@ -13,7 +13,7 @@
     <td>{{ user['lastName'] }}</td>
     <td>
         <mat-icon fontIcon="search icon" (click)="showDetail(i)">search icon</mat-icon>
-        <mat-icon fontIcon="edit icon" (click)="this.router.navigate(['/users/', user.userId])"></mat-icon>
+        <mat-icon fontIcon="edit icon" (click)="editUser(user.userId)"></mat-icon>
         <mat-icon fontIcon="delete" (click)="deleteUser(user.userId)"></mat-icon>
     </td>
 </tr>

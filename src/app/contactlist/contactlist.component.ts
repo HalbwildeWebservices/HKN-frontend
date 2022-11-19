@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { IUserResponse } from 'hkn-common';
 import { Subscription } from 'rxjs';
+import { UserIdTransferService } from '../services/userIdTransfer/user-id-transfer.service';
 import { UserService } from '../services/userService/user.service';
 import { UserDetailComponent } from '../user-detail/user-detail.component';
 
@@ -16,9 +17,12 @@ export class ContactlistComponent implements OnInit, OnDestroy {
   public users: IUserResponse[] = [];
   private subscriptions: Subscription[] = [];
 
-  constructor(public router: Router, private userService: UserService, private dialog: MatDialog) {
-
-  }
+  constructor(
+    public router: Router, 
+    private userService: UserService, 
+    private dialog: MatDialog,
+    private userIdTransferService: UserIdTransferService
+  ) { }
 
 
   ngOnInit(): void {
@@ -43,6 +47,11 @@ export class ContactlistComponent implements OnInit, OnDestroy {
     this.dialog.open(UserDetailComponent, {
       data: { users: this.users, selectionIndex },
     })
+  }
+
+  public editUser(userId: string) {
+    this.userIdTransferService.setUserId(userId);
+    this.router.navigate(['/users', userId]);
   }
 
   public deleteUser(userId: string) {
