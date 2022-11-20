@@ -1,0 +1,33 @@
+<label *ngIf="isLoading">LOADING...</label>
+<div class="row" *ngIf="!isLoading">
+    <div class="col-2">
+        <label>actual permissions</label>
+        <div *ngFor="let permission of actualPermissions; index as i">
+            <div class="row">
+                <button [class.selected]="permission.selected" type="button" (click)="permission.selected = !permission.selected">{{ permission.name}}</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-1">
+        <div class="row">
+            <button [disabled]="addDisabled()" (click)="addPermissions()">add</button>
+        </div>
+        <div class="row">
+            <button [disabled]="removeDisabled()" (click)="removePermissions()">remove</button>
+        </div>
+        <div class="row">
+            <button (click)="putPermissions()">submit</button>
+        </div>
+        <div class="row">
+            <button (click)="cancel()">cancel</button>
+        </div>
+    </div>
+    <div class="col-2">
+        <label>available permissions</label>
+        <div *ngFor="let permission of availablePermissions; index as i">
+            <div class="row">
+                <button type="button" [class.selected]="permission.selected" (click)="permission.selected = !permission.selected">{{ permission.name}}</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -29,6 +29,7 @@ import { SidenavComponent } from './sidenav/sidenav.component';
 import { httpInterceptorProviders } from './http-interceptors';
 import { CreateUserComponent } from './create-user/create-user.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
+import { PermissionEditorComponent } from './permission-editor/permission-editor.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { UserDetailComponent } from './user-detail/user-detail.component';
     MemberProfileComponent,
     SidenavComponent,
     CreateUserComponent,
-    UserDetailComponent
+    UserDetailComponent,
+    PermissionEditorComponent
   ],
   imports: [
     BrowserModule,

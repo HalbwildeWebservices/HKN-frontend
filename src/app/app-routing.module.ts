@@ -10,6 +10,7 @@ import { ContactlistComponent } from './contactlist/contactlist.component';
 import { MemberProfileComponent } from './member-profile/member-profile.component';
 import { CreateUserComponent } from './create-user/create-user.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
+import { PermissionEditorComponent } from './permission-editor/permission-editor.component';
 
 const routes: Routes = [
   {
@@ -56,6 +57,11 @@ const routes: Routes = [
   {
     path: 'users/new',
     component: CreateUserComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'users/:userId/permissions',
+    component: PermissionEditorComponent,
     canActivate: [AuthGuardService],
   }
 ];

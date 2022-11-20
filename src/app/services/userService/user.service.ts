@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ICreatePhoneNumberRequest, ICreateUserRequest, IPatchPhoneNumberRequest, IPatchUserRequest, IUser, IUserResponse } from 'hkn-common';
+import { ICreatePhoneNumberRequest, ICreateUserRequest, IPatchPhoneNumberRequest, IPatchUserRequest, IPermissionResponse, IUser, IUserResponse } from 'hkn-common';
 
 @Injectable({
   providedIn: 'root'
@@ -41,6 +41,14 @@ export class UserService {
   public addPhoneNumber(userId: string, request: ICreatePhoneNumberRequest) {
     console.log('add phone number request', userId, request);
     return this.http.post<IUserResponse>(`${this.baseUrl}/users/${userId}/phone-numbers`, request);
+  }
+
+  public getUserPermissions(userId: string) {
+    return this.http.get<IPermissionResponse>(`${this.baseUrl}/users/${userId}/permissions`);
+  }
+
+  public setUserPermissions(userId: string, permissions: string[]) {
+    return this.http.put<IUserResponse>(`${this.baseUrl}/users/${userId}/permissions`, { permissions })
   }
 
 

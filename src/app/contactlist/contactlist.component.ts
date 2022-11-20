@@ -63,4 +63,9 @@ export class ContactlistComponent implements OnInit, OnDestroy {
     );
   }
 
+  public editPermissions(userId: string) {
+    this.userIdTransferService.setUserId(userId);
+    this.router.navigate(['/users', userId, 'permissions']);
+  }
+
 }
