@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { EPermission } from 'hkn-common';
+import { AuthServiceService } from '../services/authService/auth-service.service';
 import { UserIdTransferService } from '../services/userIdTransfer/user-id-transfer.service';
 
 @Component({
@@ -9,14 +11,29 @@ import { UserIdTransferService } from '../services/userIdTransfer/user-id-transf
 })
 export class MemberDashboardComponent implements OnInit {
 
-  constructor(public router: Router, private userIdTransferService: UserIdTransferService) { }
+  public canActivateContactlist = false;
+  public canAddUser = false;
+  constructor(
+    public router: Router, 
+    private userIdTransferService: UserIdTransferService,
+    private authService: AuthServiceService,
+    
+    ) { }
 
   ngOnInit(): void {
+    this.setPermissions()
+    
   }
 
   createUser() {
     this.userIdTransferService.setUserId(undefined);
     this.router.navigate(['/users', 'new']);
+  }
+
+  private setPermissions() {
+    const roles = this.authService.getRoles();
+    this.canActivateContactlist = roles.some((r) => [EPermission.READ_USER.toString(), EPermission.UPDATE_USER.toString()].includes(r));
+    this.canAddUser = roles.includes(EPermission.ADD_USER);
   }
 
 }

@@ -51,4 +51,13 @@ export class AuthServiceService {
         return token;
     }
 
+    public getRoles() : string[] {
+        const token = this.getToken();
+        if (!token) {
+            return [];
+        }
+        const decodedToken = this.jwtHelper.decodeToken(token);
+        return decodedToken?.roles ?? [];
+    }
+
 }

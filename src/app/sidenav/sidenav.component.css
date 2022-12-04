@@ -8,3 +8,8 @@
   .menu-button mat-icon {
     margin-right: 8px;
   }
+
+.mat-divider {
+  width: 100%;
+  background-color: gray;
+}

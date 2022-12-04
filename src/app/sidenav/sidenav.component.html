@@ -1,6 +1,16 @@
-<button mat-button class="menu-button" routerLink="/home">
+  <button mat-button class="menu-button" routerLink="/home">
     <mat-icon>home</mat-icon>
     <span>Home</span>
+  </button>
+
+  <button mat-button class="menu-button" routerLink="/events">
+    <mat-icon>event</mat-icon>
+    <span>Events</span>
+  </button>
+
+  <button mat-button class="menu-button" routerLink="/activities">
+    <mat-icon>directions_boat</mat-icon>
+    <span>Activities</span>
   </button>
 
   <button mat-button class="menu-button" routerLink="/about-us">
@@ -13,6 +23,8 @@
     <span>Contact Us</span>
   </button>
 
+  <mat-divider></mat-divider>
+
   <button mat-button class="menu-button" routerLink="/sign-in" *ngIf="!this.authService.isLoggedIn()">
     <mat-icon>lock_open</mat-icon>
     <span>Sign in</span>
@@ -21,4 +33,9 @@
   <button mat-button class="menu-button" routerLink="/dashboard" *ngIf="this.authService.isLoggedIn()">
     <mat-icon>dashboard</mat-icon>
     <span>Dashboard</span>
+  </button>
+
+  <button mat-button class="menu-button" (click)="this.authService.logout()" routerLink="/home" *ngIf="this.authService.isLoggedIn()">
+    <mat-icon>exit_to_app</mat-icon>
+    <span>Sign out</span>
   </button>

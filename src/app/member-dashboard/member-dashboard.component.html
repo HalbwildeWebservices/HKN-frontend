@@ -1,3 +1,3 @@
-<button mat-button (click)="this.router.navigate(['/users'])">Contactlist</button>
+<button mat-button *ngIf="canActivateContactlist" (click)="this.router.navigate(['/users'])">Contactlist</button>
 <button mat-button (click)="this.router.navigate(['/profile'])">Edit Profile</button>
-<button mat-button (click)="createUser()">Create User</button>
+<button mat-button *ngIf="canAddUser" (click)="createUser()">Create User</button>

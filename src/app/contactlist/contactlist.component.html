@@ -1,4 +1,5 @@
-<table class="contactlist">
+<mat-spinner *ngIf="isLoading"></mat-spinner>
+<table class="contactlist" *ngIf="!isLoading">
 <tr>
     <th>nr</th>
     <th>username</th>
@@ -12,10 +13,10 @@
     <td>{{ user['firstName'] }}</td>
     <td>{{ user['lastName'] }}</td>
     <td>
-        <mat-icon fontIcon="search icon" (click)="showDetail(i)">search icon</mat-icon>
-        <mat-icon fontIcon="edit icon" (click)="editUser(user.userId)"></mat-icon>
-        <mat-icon fontIcon="delete" (click)="deleteUser(user.userId)"></mat-icon>
-        <mat-icon fontIcon="lock" (click)="editPermissions(user.userId)"></mat-icon>
+        <mat-icon fontIcon="info" (click)="showDetail(i)"></mat-icon>
+        <mat-icon fontIcon="edit icon" *ngIf="canEditUsers" (click)="editUser(user.userId)"></mat-icon>
+        <mat-icon fontIcon="delete" *ngIf="canDeleteUsers" (click)="deleteUser(user.userId)"></mat-icon>
+        <mat-icon fontIcon="lock" *ngIf="canManagePermissions" (click)="editPermissions(user.userId)"></mat-icon>
     </td>
 </tr>
 </table>

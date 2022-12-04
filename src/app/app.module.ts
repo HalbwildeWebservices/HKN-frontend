@@ -19,6 +19,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { ContactHKNComponent } from './contact-hkn/contact-hkn.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -30,6 +31,8 @@ import { httpInterceptorProviders } from './http-interceptors';
 import { CreateUserComponent } from './create-user/create-user.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
 import { PermissionEditorComponent } from './permission-editor/permission-editor.component';
+import { NextEventsComponent } from './next-events/next-events.component';
+import { ActivitiesComponent } from './activities/activities.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +47,9 @@ import { PermissionEditorComponent } from './permission-editor/permission-editor
     SidenavComponent,
     CreateUserComponent,
     UserDetailComponent,
-    PermissionEditorComponent
+    PermissionEditorComponent,
+    NextEventsComponent,
+    ActivitiesComponent
   ],
   imports: [
     BrowserModule,
@@ -64,6 +69,7 @@ import { PermissionEditorComponent } from './permission-editor/permission-editor
     MatSelectModule,
     MatTooltipModule,
     MatDialogModule,
+    MatProgressSpinnerModule,
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

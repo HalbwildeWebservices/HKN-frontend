@@ -11,7 +11,7 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   public getUsers() {
-    return this.http.get<IUser[]>(`${this.baseUrl}/users`)
+    return this.http.get<IUserResponse[]>(`${this.baseUrl}/users`)
   }
 
   public getUser(userId: string) {

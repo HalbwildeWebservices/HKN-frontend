@@ -129,6 +129,10 @@ export class CreateUserComponent implements OnInit, OnDestroy {
       phoneNumbers: this.reachabilityFormGroup.controls.phoneNumbers
         .getRawValue()
         .map((p) => {return {number: p.number, description: p.description}}),
+      legal: {
+        acceptTerms: this.privacyAndTermsGroup.controls.termsAccepted.value,
+        acceptPrivacy: this.privacyAndTermsGroup.controls.privacyAccepted.value,
+      }
     }
     console.log('new user', userFromForm)
     if (!this.editMode) {
@@ -143,6 +147,7 @@ export class CreateUserComponent implements OnInit, OnDestroy {
         lastName: userFromForm.lastName,
         email: userFromForm.email,
         address: userFromForm.address,
+        legal: userFromForm.legal,
       }
       const updateUserPromises: Promise<any>[] = []
       updateUserPromises.push(firstValueFrom(this.userService.updateUser(this.storedUser.userId, patchUserRequest)))

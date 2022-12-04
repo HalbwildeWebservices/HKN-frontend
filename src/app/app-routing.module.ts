@@ -11,6 +11,8 @@ import { MemberProfileComponent } from './member-profile/member-profile.componen
 import { CreateUserComponent } from './create-user/create-user.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
 import { PermissionEditorComponent } from './permission-editor/permission-editor.component';
+import { NextEventsComponent } from './next-events/next-events.component';
+import { ActivitiesComponent } from './activities/activities.component';
 
 const routes: Routes = [
   {
@@ -21,6 +23,14 @@ const routes: Routes = [
   {
     path: 'home',
     component: HomeComponent,
+  },
+  {
+    path: 'events',
+    component: NextEventsComponent,
+  },
+  {
+    path: 'activities',
+    component: ActivitiesComponent,
   },
   {
     path: 'about-us',

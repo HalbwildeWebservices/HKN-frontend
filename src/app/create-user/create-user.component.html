@@ -1,5 +1,5 @@
-<p *ngIf="this.isLoading">LOADING...</p>
-<mat-vertical-stepper [linear]="true" *ngIf="!this.isLoading" #stepper>
+<mat-spinner *ngIf="isLoading"></mat-spinner>
+<mat-vertical-stepper [linear]="true" *ngIf="!isLoading" #stepper>
   <mat-step [stepControl]="nameFormGroup">
     <form [formGroup]="nameFormGroup">
       <ng-template matStepLabel>Name</ng-template>
