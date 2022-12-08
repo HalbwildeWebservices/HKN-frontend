@@ -60,4 +60,13 @@ export class AuthServiceService {
         return decodedToken?.roles ?? [];
     }
 
+    public getUserId(): string | undefined {
+        const token = this.getToken();
+        if (!token) {
+            return undefined;
+        }
+        const decodedToken = this.jwtHelper.decodeToken(token);
+        return decodedToken?.sub;
+    }
+
 }

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { EPermission, IPermissionResponse, IUserResponse } from 'hkn-common';
+import { EPermission, IPermissionResponse, ILegal } from 'hkn-common';
 import { Subscription } from 'rxjs';
 import { UserIdTransferService } from '../services/userIdTransfer/user-id-transfer.service';
 import { UserService } from '../services/userService/user.service';
@@ -53,6 +53,7 @@ export class PermissionEditorComponent implements OnInit, OnDestroy {
   private populatePermissions(permissionsResponse: IPermissionResponse) {
     const actualPermissionNames = permissionsResponse.permissions.map((p) => p.name);
     this.actualPermissions = actualPermissionNames.map((n) => {return {selected: false, name: n}});
+    console.log(Object.values(EPermission))
     this.availablePermissions = Object.values(EPermission)
       .filter(v => !actualPermissionNames.includes(v))
       .map((v) => {return {selected: false, name: v}})

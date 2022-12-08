@@ -30,6 +30,12 @@ export class MemberDashboardComponent implements OnInit {
     this.router.navigate(['/users', 'new']);
   }
 
+  editProfile() {
+    const userId = this.authService.getUserId();
+    this.userIdTransferService.setUserId(userId);
+    this.router.navigate(['/users', userId]);
+  }
+
   private setPermissions() {
     const roles = this.authService.getRoles();
     this.canActivateContactlist = roles.some((r) => [EPermission.READ_USER.toString(), EPermission.UPDATE_USER.toString()].includes(r));
