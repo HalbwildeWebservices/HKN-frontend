@@ -1,0 +1,18 @@
+.mat-icon {
+    width: 96px;
+    height: 96px;
+    font-size: 96px;
+}
+
+.card-img-top {
+    text-align: center;
+}
+
+.card-body h4 {
+    font-size: large;
+}
+
+.card-dashboard:hover {
+    background-color: deepskyblue;
+    cursor: pointer;
+}
